@@ -1,0 +1,1858 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="UTF-8" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ISZ – Právní pracovní prostor (v4.2)</title>
+
+<style>
+:root {
+  --accent: #0f766e;
+  --accent-light: #14b8a6;
+  --accent-hover: #0d665c;
+  --bg-side: #e2e8f0;
+  --bg-main: #f8fafc;
+  --text-dark: #1e293b;
+  --text-muted: #64748b;
+  --border: #cbd5e1;
+  --card-bg: #ffffff;
+  --shadow: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --radius-lg: 12px;
+  --radius-sm: 6px;
+  --toolbar-bg: #f1f5f9;
+  --note-bg: #fffbea;
+  --highlight-yellow: #fef08a;
+  --highlight-green: #bbf7d0;
+  --highlight-red: #fecaca;
+  --highlight-blue: #bbdefb;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background-color: var(--bg-main);
+  color: var(--text-dark);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+}
+
+/* Horní řádek */
+header.appHeader {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  z-index: 999;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid var(--border);
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.topRowFlex {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: .75rem;
+  align-items: flex-start;
+}
+
+.leftBlockHeader {
+  min-width: 240px;
+  max-width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.appName {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1.4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .5rem;
+}
+
+#statsSummary {
+  font-size: .7rem;
+  color: var(--text-muted);
+  background: var(--toolbar-bg);
+  padding: .3rem .5rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  gap: .75rem;
+  flex-wrap: wrap;
+  line-height: 1.4;
+}
+#statsSummary span { white-space: nowrap; }
+
+.currentLawName {
+  font-size: .8rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  border: 1px solid transparent;
+  padding: 2px 4px;
+  margin: -2px -4px;
+  border-radius: var(--radius-sm);
+  max-width: 100%;
+  line-height: 1.3;
+  background: #fff;
+}
+.currentLawName[contenteditable="true"]:focus {
+  border: 1px dashed var(--accent);
+  background: var(--highlight-blue);
+  color: var(--text-dark);
+  outline: none;
+}
+
+.centerBlockHeader {
+  flex: 1;
+  min-width: 240px;
+  max-width: 480px;
+  display: flex;
+  flex-direction: column;
+  gap: .4rem;
+}
+
+.helperLine {
+  font-size: .7rem;
+  color: var(--text-muted);
+  line-height: 1.2;
+}
+#globalSearchInput {
+  width: 100%;
+  padding: .4rem .5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: .8rem;
+  background: #fff;
+  outline: none;
+}
+
+.rightBlockHeader {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  align-items: flex-start;
+  justify-content: flex-end;
+  min-width: 240px;
+}
+
+button.toolBtn {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: .45rem .6rem;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: background .15s;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  line-height: 1.2;
+}
+button.toolBtn:hover { background: var(--accent-hover); }
+button.toolBtn.danger { background: #b91c1c; }
+button.toolBtn.danger:hover { background:#7f1d1d; }
+button.toolBtn.sec {
+  background:#1e3a8a;
+}
+button.toolBtn.sec:hover {
+  background:#1e40af;
+}
+button.toolBtn.alt {
+  background:#065f46;
+}
+button.toolBtn.alt:hover {
+  background:#064e3b;
+}
+button.toolBtn.file {
+  background:#334155;
+}
+button.toolBtn.file:hover {
+  background:#1e293b;
+}
+
+/* Tabs bar */
+.tabsBarWrapper {
+  border-top: 1px solid var(--border);
+  padding-top: .5rem;
+}
+.tabsBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  background: #fff;
+}
+.tabsBar button.lawTab {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm) var(--radius-sm) 0 0;
+  padding: .4rem .6rem;
+  font-size: .8rem;
+  cursor: pointer;
+  background: var(--bg-side);
+  color: var(--text-dark);
+  transition: all .15s;
+}
+.tabsBar button.lawTab.active {
+  background: var(--card-bg);
+  border-color: var(--accent);
+  border-bottom: 2px solid var(--card-bg);
+  font-weight: 600;
+}
+
+/* Main layout */
+.mainArea {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  border-top: 1px solid var(--border);
+  overflow: hidden;
+}
+
+/* Left panel */
+aside#leftPanel {
+  background: var(--bg-side);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  max-height: 100%;
+}
+.leftPanelHeader {
+  flex-shrink: 0;
+  position: sticky;
+  top: 0;
+  background: var(--bg-side);
+  padding: .4rem;
+  border-bottom: 1px solid var(--border);
+  z-index: 5;
+}
+#parSearchInput {
+  width: 100%;
+  padding: .4rem .5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: .8rem;
+  outline: none;
+  background:#fff;
+}
+#parList {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: .5rem;
+}
+.parListItem {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .4rem .5rem;
+  margin-bottom: .4rem;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  font-size: .8rem;
+  line-height: 1.3;
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  position: relative;
+  transition: background .15s, border-color .15s;
+}
+.parListItem.active {
+  border: 2px solid var(--accent);
+  background: #ecfdf5;
+}
+.parListItem.dragging {
+  opacity: 0.5;
+  border: 2px dashed var(--accent);
+}
+.parListItem.drag-over-top {
+  border-top: 3px solid var(--accent);
+}
+.parListItem.drag-over-bottom {
+  border-bottom: 3px solid var(--accent);
+}
+
+/* Right panel */
+section#rightPanel {
+  min-height: 0;
+  max-height: 100%;
+  overflow-y: auto;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  background:#fff;
+}
+
+/* Toast */
+#toast-notification {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: var(--accent);
+  color: #fff;
+  text-align: center;
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  position: fixed;
+  z-index: 1000;
+  right: 30px;
+  top: 30px;
+  font-size: .8rem;
+  box-shadow: var(--shadow-lg);
+  opacity: 0;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+#toast-notification.show {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* Paragraf card */
+.parCard {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 1rem;
+  scroll-margin-top: 6rem;
+}
+.parHeadRow {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+.parHeadTitles {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+  min-width:0;
+}
+.parNumberEditable, .parNameEditable {
+  border: 1px solid transparent;
+  padding: 1px 2px;
+  margin: -1px -2px;
+  outline: none;
+  border-radius: var(--radius-sm);
+  max-width:100%;
+  word-break: break-word;
+}
+.parNumberEditable[contenteditable="true"]:focus,
+.parNameEditable[contenteditable="true"]:focus {
+  border: 1px dashed var(--accent-light);
+  background: #fff;
+}
+.parNumberEditable {
+  font-weight: 600;
+  color: var(--accent);
+}
+.parNameEditable {
+  font-size: .9rem;
+}
+.parLawSmall {
+  font-size: .7rem;
+  color: #64748b;
+  line-height:1.2;
+  word-break: break-word;
+}
+.headBtnsRow {
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+  align-items:flex-start;
+}
+
+.smallBtn {
+  background: var(--accent);
+  color: #fff;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: .35rem .5rem;
+  font-size: .75rem;
+  cursor: pointer;
+  line-height:1.2;
+  transition: background .15s;
+  white-space:nowrap;
+}
+.smallBtn:hover { background: var(--accent-hover); }
+.smallBtn.danger {
+  background: #b91c1c;
+}
+.smallBtn.danger:hover { background:#7f1d1d; }
+
+.parBodyGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: .5rem;
+  align-items: start;
+  min-width: 0;
+}
+
+/* Toolbary */
+.formatToolbar,
+.noteToolbar {
+  background: var(--toolbar-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .3rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: .3rem;
+  font-size:0;
+}
+.formatToolbar button,
+.noteToolbar button {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .3rem .4rem;
+  font-size: .7rem;
+  line-height:1.2;
+  cursor: pointer;
+  min-width:2.4rem;
+  text-align:center;
+  font-family: inherit;
+}
+.formatToolbar button[data-color="yellow"],
+.noteToolbar button[data-color="yellow"] {
+  background: var(--highlight-yellow);
+}
+.formatToolbar button[data-color="green"],
+.noteToolbar button[data-color="green"] {
+  background: var(--highlight-green);
+}
+.formatToolbar button[data-color="red"],
+.noteToolbar button[data-color="red"] {
+  background: var(--highlight-red);
+}
+
+/* Text bloky */
+.textBlock {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .5rem;
+  background: #fffef5;
+  min-height: 6rem;
+  outline: none;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+  font-size:.85rem;
+}
+.textBlock[contenteditable="true"]:focus {
+  outline: 2px solid var(--accent-light);
+  background:#fffeef;
+}
+
+/* Uložit paragraf */
+.saveParRow {
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+  margin-top:.5rem;
+  justify-content:flex-end;
+  align-items:center;
+  font-size:.7rem;
+  color:var(--text-muted);
+}
+
+/* Links */
+.linksSection {
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .5rem .6rem;
+  font-size: .8rem;
+  margin-top: .75rem;
+}
+.linksSection h4 {
+  margin: 0 0 .5rem 0;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+.linksSection h5 {
+  margin: .5rem 0 .3rem 0;
+  font-size: .75rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.linksSection button.linkJump {
+  background:none;
+  border:0;
+  color:var(--accent);
+  cursor:pointer;
+  padding:0;
+  text-decoration:underline;
+  font-size:.8rem;
+  text-align:left;
+  display:block;
+  margin-bottom:2px;
+  line-height:1.3;
+  word-break: break-word;
+}
+.linkActionsRow {
+  display:flex;
+  flex-wrap:wrap;
+  gap:.5rem;
+  margin-top:.5rem;
+}
+.linkActionsRow button {
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:.3rem .4rem;
+  font-size:.7rem;
+  cursor:pointer;
+  line-height:1.2;
+  white-space:nowrap;
+}
+
+/* Poznámky */
+.noteEditorCard {
+  background: var(--note-bg);
+  border: 1px solid #facc15;
+  border-radius: var(--radius-sm);
+  padding: .6rem;
+}
+.attachWrap {
+  font-size:.75rem;
+  display:flex;
+  flex-direction:column;
+  gap:.4rem;
+  margin-top:.5rem;
+}
+.attachWrap input[type="file"] {
+  font-size:.7rem;
+}
+.existing-files {
+  margin-top: .5rem;
+  font-size: .8rem;
+  padding: .3rem;
+  border: 1px dashed #facc15;
+  background: #fffdf2;
+}
+.existing-files button.file-remove {
+  background: #f87171;
+  color: #fff;
+  border: 0;
+  border-radius: var(--radius-sm);
+  padding: .1rem .3rem;
+  font-size: .7rem;
+  margin-left: .5rem;
+  cursor: pointer;
+}
+
+.noteSaveRow {
+  display:flex;
+  justify-content:flex-end;
+  margin-top:.5rem;
+}
+
+.savedNotesList {
+  margin-top: 1rem;
+}
+.singleNoteCard {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: .6rem;
+  margin-top: .75rem;
+  box-shadow: var(--shadow);
+}
+.singleNoteHeadRow {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: .4rem;
+  font-size: .75rem;
+  flex-wrap:wrap;
+  gap:.5rem;
+  line-height:1.4;
+}
+.singleNoteHeadRow button {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-size: .75rem;
+  line-height:1.2;
+  padding:0;
+  color:#1e40af;
+  text-decoration:underline;
+}
+.filesList {
+  font-size:.75rem;
+  margin-top:.4rem;
+  line-height:1.4;
+}
+.filesListItem {
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+  margin-bottom:.3rem;
+}
+.filesListItem button {
+  background:none;
+  border:0;
+  padding:0;
+  cursor:pointer;
+  color:var(--accent);
+  text-decoration:underline;
+  font-size:.75rem;
+  line-height:1.2;
+  text-align:left;
+  word-break: break-word;
+}
+
+/* Highlights */
+.hl-yellow { background: var(--highlight-yellow); }
+.hl-green  { background: var(--highlight-green); }
+.hl-red    { background: var(--highlight-red); }
+
+/* welcome strip */
+.welcomeStrip {
+  font-size:.7rem;
+  line-height:1.4;
+  color:#475569;
+  background:#f8fafc;
+  border:1px solid var(--border);
+  border-radius:var(--radius-sm);
+  padding:.4rem .5rem;
+  margin-top:.25rem;
+}
+.welcomeStrip b {
+  color:var(--accent);
+}
+</style>
+</head>
+<body>
+
+<header class="appHeader">
+  <div class="topRowFlex">
+
+    <div class="leftBlockHeader">
+      <div class="appName">
+        <div>ISZ – Právní pracovní prostor (v4.2)</div>
+        <div id="statsSummary"></div>
+      </div>
+
+      <div
+        class="currentLawName"
+        id="currentLawName"
+        contenteditable="true"
+        spellcheck="false"
+        title="Kliknutím upravte název zákona"
+      >(žádný zákon)</div>
+
+      <div class="welcomeStrip" id="welcomeStrip">
+        <b>Tip:</b> Začni tlačítkem „Přidat zákon“, pak „Vložit nový §“. Vše se ukládá lokálně.
+      </div>
+    </div>
+
+    <div class="centerBlockHeader">
+      <div class="helperLine">Hledat napříč zákony…</div>
+      <input
+        id="globalSearchInput"
+        placeholder="Text, číslo §, název, poznámka… (zatím jen aktivní zákon)"
+      />
+    </div>
+
+    <div class="rightBlockHeader">
+      <button class="toolBtn alt" id="btnAddLaw">➕ <span>Přidat zákon</span></button>
+      <button class="toolBtn danger" id="btnRemoveLaw">🗑 <span>Odebrat zákon</span></button>
+      <button class="toolBtn sec" id="btnLoadTxtLaw">📄 <span>Načíst zákon (.txt)</span></button>
+      <button class="toolBtn alt" id="btnAddPar">📌 <span>Vložit nový §</span></button>
+      <button class="toolBtn file" id="btnExport">💾 <span>Export zálohy</span></button>
+      <button class="toolBtn file" id="btnImport">📂 <span>Import zálohy</span></button>
+
+      <input type="file" id="txtLawFileInput" accept=".txt" style="display:none;">
+      <input type="file" id="jsonImportInput" accept=".json" style="display:none;">
+    </div>
+
+  </div>
+
+  <div class="tabsBarWrapper">
+    <div class="tabsBar" id="tabsBar"></div>
+  </div>
+</header>
+
+<div class="mainArea">
+  <aside id="leftPanel">
+    <div class="leftPanelHeader">
+      <input id="parSearchInput" placeholder="Hledat §, název nebo text tohoto zákona.">
+    </div>
+    <div id="parList"></div>
+  </aside>
+
+  <section id="rightPanel"></section>
+</div>
+
+<div id="toast-notification"></div>
+
+<script type="text/javascript">
+(function(){
+
+// ===== KONSTANTY A STAV =====
+const STORAGE_KEY = "isz_laws_v82_v42";
+let state = loadState();
+let activeLawId = null;
+let activeParId = null;
+let editingNoteRef = null; // {parObj, noteObj}
+let currentNoteFiles = []; // [{name:"..."}]
+
+// debounce helper (lehčí než předtím)
+function debounce(fn, delay){
+  let t=null;
+  return function(){
+    const args=arguments;
+    if(t) clearTimeout(t);
+    t=setTimeout(function(){fn.apply(null,args)},delay);
+  }
+}
+
+// toast
+function showToast(msg, dur){
+  dur = dur || 2000;
+  var toast = document.getElementById("toast-notification");
+  toast.textContent = msg;
+  toast.classList.add("show");
+  setTimeout(function(){
+    toast.classList.remove("show");
+  }, dur);
+}
+
+// localStorage
+function loadState(){
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    if(raw){ return JSON.parse(raw); }
+  } catch(e){ console.warn("Nelze načíst uložený stav:", e); }
+  return {};
+}
+
+function saveState(){
+  try {
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  } catch(e){
+    console.error("Chyba při ukládání:", e);
+  }
+  renderStatistics();
+}
+
+// trochu mírnější autosave => méně sekání
+const autoSave = debounce(function(){
+  saveState();
+  showToast("Uloženo.",1000);
+},700);
+
+// pomocné
+function uid(prefix){
+  return prefix+"_"+Date.now()+"_"+Math.floor(Math.random()*100000);
+}
+function pad(n){return n<10?"0"+n:n;}
+function nowTimestamp(){
+  var d=new Date();
+  return pad(d.getDate())+"."+pad(d.getMonth()+1)+"."+d.getFullYear()+" "+
+         pad(d.getHours())+":"+pad(d.getMinutes())+":"+pad(d.getSeconds());
+}
+function looksLikeParTitle(line){
+  if(!line) return false;
+  if(line.length>120) return false;
+  if(/[.!?]$/.test(line)) return false;
+  var commas=(line.match(/,/g)||[]).length;
+  if(commas>=2 && line.length>80) return false;
+  if(/^§ \d+[a-z]?/i.test(line)) return false;
+  return true;
+}
+function scrollToParCard(parId){
+  var card=document.querySelector('.parCard[data-par-id="'+parId+'"]');
+  var panel=document.getElementById("rightPanel");
+  if(!card||!panel) return;
+  panel.scrollTo({top:card.offsetTop-80,behavior:"smooth"});
+}
+
+// ===== Statistiky =====
+function renderStatistics(){
+  var statsDiv=document.getElementById("statsSummary");
+  if(!statsDiv) return;
+  if(!activeLawId || !state[activeLawId]){
+    statsDiv.innerHTML="";
+    return;
+  }
+  var law=state[activeLawId];
+  var totalPars=law.pars.length;
+  var totalNotes=0;
+  var totalLinks=0;
+  var totalWords=0;
+  law.pars.forEach(function(par){
+    totalNotes+=par.notes.length;
+    totalLinks+=par.links_internal.length+par.links_external.length;
+    totalWords+=(par.text.replace(/<[^>]*>/g,'').match(/\b\w+\b/g)||[]).length;
+  });
+  statsDiv.innerHTML=
+    '<span>⚖️ §: <b>'+totalPars+
+    '</b></span><span>📝 Poznámky: <b>'+totalNotes+
+    '</b></span><span>🔗 Odkazy: <b>'+totalLinks+
+    '</b></span><span>✍️ Slov: <b>'+totalWords+'</b></span>';
+}
+
+// ===== Překreslení všeho =====
+function renderEverything(){
+  renderTabs();
+  updateCurrentLawName();
+  renderStatistics();
+  renderParList();
+  renderRightPanel();
+}
+
+// ===== Hlavička – název zákona =====
+function updateCurrentLawName(){
+  var el=document.getElementById("currentLawName");
+  var welcome=document.getElementById("welcomeStrip");
+
+  if(!activeLawId || !state[activeLawId]){
+    el.textContent="(žádný zákon)";
+    el.setAttribute("contenteditable","false");
+    welcome.style.display="block";
+    return;
+  }
+
+  var law=state[activeLawId];
+  el.textContent=law.nazev||"(bez názvu)";
+  el.setAttribute("contenteditable","true");
+  welcome.style.display= law.pars.length? "none":"block";
+
+  el.onblur=function(){
+    var newName=el.textContent.trim()||"(bez názvu)";
+    if(law.nazev!==newName){
+      law.nazev=newName;
+      saveState();
+      renderTabs();
+      renderStatistics();
+      showToast("Název zákona upraven na '"+newName+"'.");
+    }
+  };
+}
+
+// ===== Tabs (zákony nahoře) =====
+function renderTabs(){
+  var tabsBar=document.getElementById("tabsBar");
+  tabsBar.innerHTML="";
+  Object.keys(state).forEach(function(lawId){
+    var law=state[lawId];
+    var btn=document.createElement("button");
+    btn.className="lawTab"+(lawId===activeLawId?" active":"");
+    btn.textContent=law.nazev||"(bez názvu)";
+    btn.onclick=function(){
+      if(editingNoteRef && editingNoteRef.parObj.lawId!==lawId){
+        editingNoteRef=null;
+        currentNoteFiles=[];
+      }
+      activeLawId=lawId;
+      activeParId= state[lawId].pars[0]? state[lawId].pars[0].id : null;
+      renderEverything();
+    };
+    tabsBar.appendChild(btn);
+  });
+}
+
+// ===== Řazení paragrafů drag&drop =====
+function reorderParagraphs(lawId, draggedId, targetId, dropBefore){
+  var law=state[lawId];
+  var draggedIndex=law.pars.findIndex(function(p){return p.id===draggedId});
+  var targetIndex=law.pars.findIndex(function(p){return p.id===targetId});
+  if(draggedIndex===-1||targetIndex===-1)return;
+
+  var draggedPar=law.pars.splice(draggedIndex,1)[0];
+  var newIndex=targetIndex;
+  if(!dropBefore){ newIndex=targetIndex+1; }
+  if(draggedIndex<targetIndex && !dropBefore){ newIndex=targetIndex; }
+  law.pars.splice(newIndex,0,draggedPar);
+
+  activeParId=draggedId;
+  saveState();
+  renderParList();
+  showToast("§ přesunut.");
+}
+
+// ===== Levý panel seznam § =====
+function renderParList(){
+  var parList=document.getElementById("parList");
+  parList.innerHTML="";
+  if(!activeLawId || !state[activeLawId]) return;
+  var law=state[activeLawId];
+
+  var searchVal=(document.getElementById("parSearchInput").value||"").toLowerCase().trim();
+  var searchCandidates=law.pars.map(function(par){
+    return {
+      ref:par,
+      searchContent:
+        (par.cislo||"")+" "+
+        (par.nazev||"")+" "+
+        (par.text.replace(/<[^>]*>/g,'')||"")
+    .toLowerCase()
+    };
+  });
+
+  searchCandidates.forEach(function(item){
+    var par=item.ref;
+    if(searchVal && item.searchContent.indexOf(searchVal)===-1) return;
+
+    var div=document.createElement("div");
+    div.className="parListItem"+(par.id===activeParId?" active":"");
+    div.textContent=(par.cislo||"§ ?")+(par.nazev?" – "+par.nazev:"");
+
+    // drag attrs
+    div.setAttribute("draggable","true");
+    div.dataset.parId=par.id;
+
+    div.addEventListener("dragstart",function(e){
+      e.dataTransfer.setData("text/plain",par.id);
+      e.dataTransfer.effectAllowed="move";
+      div.classList.add("dragging");
+    });
+    div.addEventListener("dragend",function(){
+      div.classList.remove("dragging");
+    });
+    div.addEventListener("dragover",function(e){
+      e.preventDefault();
+      var rect=div.getBoundingClientRect();
+      var dropBefore=e.clientY<rect.top+rect.height/2;
+
+      document.querySelectorAll(".parListItem").forEach(function(it){
+        it.classList.remove("drag-over-top","drag-over-bottom");
+      });
+
+      if(dropBefore){ div.classList.add("drag-over-top"); }
+      else { div.classList.add("drag-over-bottom"); }
+    });
+    div.addEventListener("dragleave",function(){
+      div.classList.remove("drag-over-top","drag-over-bottom");
+    });
+    div.addEventListener("drop",function(e){
+      e.preventDefault();
+      var draggedId=e.dataTransfer.getData("text/plain");
+      var targetId=par.id;
+      if(draggedId===targetId)return;
+
+      var rect=div.getBoundingClientRect();
+      var dropBefore=e.clientY<rect.top+rect.height/2;
+
+      reorderParagraphs(activeLawId, draggedId, targetId, dropBefore);
+      document.querySelectorAll(".parListItem").forEach(function(it){
+        it.classList.remove("drag-over-top","drag-over-bottom");
+      });
+    });
+
+    div.onclick=function(){
+      activeParId=par.id;
+      renderParList();
+      scrollToParCard(par.id);
+    };
+
+    parList.appendChild(div);
+  });
+}
+
+// ===== Formátování textu =====
+function wrapSelectionWithSpan(className){
+  var sel=window.getSelection();
+  if(!sel.rangeCount) return;
+  var range=sel.getRangeAt(0);
+  if(range.collapsed) return;
+
+  var span=document.createElement("span");
+  span.className=className;
+
+  try {
+    range.surroundContents(span);
+    sel.removeAllRanges();
+  } catch(e){
+    var text=range.toString();
+    var newNode=document.createElement("span");
+    newNode.className=className;
+    newNode.textContent=text;
+    range.deleteContents();
+    range.insertNode(newNode);
+    sel.removeAllRanges();
+  }
+}
+
+function cleanupHighlights(rootEl){
+  if(!rootEl) return;
+  var spans=rootEl.querySelectorAll("span.hl-yellow, span.hl-green, span.hl-red");
+  spans.forEach(function(sp){
+    var parent=sp.parentNode;
+    while(sp.firstChild){
+      parent.insertBefore(sp.firstChild,sp);
+    }
+    parent.removeChild(sp);
+  });
+}
+
+function normalizeEditableHTML(rootEl){
+  // → udržet <div> jako odstavce
+  // 1. získat čistý text s \n
+  var text=rootEl.innerText.replace(/\r\n/g,"\n").replace(/\r/g,"\n");
+  var lines=text.split("\n");
+  // 2. vytvořit nové <div> pro každou řádku
+  var html="";
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i];
+    // zachovej prázdné odstavce
+    if(line.trim()===""){
+      html+='<div><br></div>';
+    }else{
+      // při ukládání poznámky nechceme ztratit zvýraznění,
+      // takže tady tohle voláme jen pokud čistíme formát
+      html+='<div>'+escapeHTML(line)+'</div>';
+    }
+  }
+  if(!html){ html="<div><br></div>"; }
+  return html;
+}
+
+function escapeHTML(str){
+  return str
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#39;");
+}
+
+// Čistý text bez formátování, ale se zachováním odstavců
+function cleanupAllFormatting(rootEl){
+  if(!rootEl) return;
+  // nejdřív plain text s odstavci
+  var newHtml = normalizeEditableHTML(rootEl);
+  rootEl.innerHTML=newHtml;
+}
+
+// ===== Odkazy mezi paragrafy =====
+function buildLinksSection(currentLaw, par){
+  var linksSection=document.createElement("div");
+  linksSection.className="linksSection";
+
+  var h4=document.createElement("h4");
+  h4.textContent="Související ustanovení";
+  linksSection.appendChild(h4);
+
+  // interní
+  var internalGroup=document.createElement("div");
+  var internalH5=document.createElement("h5");
+  internalH5.textContent="V tomto / jiném předpisu";
+  internalGroup.appendChild(internalH5);
+
+  var internalList=document.createElement("div");
+  par.links_internal.forEach(function(li){
+    var targetLaw=state[li.lawRefId];
+    var targetPar=null;
+    if(targetLaw){
+      targetPar=targetLaw.pars.find(function(p){return p.id===li.parRefId});
+    }
+    if(!targetLaw||!targetPar)return;
+
+    var btn=document.createElement("button");
+    btn.className="linkJump";
+
+    var linkText=(targetPar.cislo||"§ ?")+" – "+(targetPar.nazev||"(bez názvu)");
+    if(targetLaw.id!==currentLaw.id){
+      linkText="["+ (targetLaw.nazev||"Jiný zákon")+"] "+linkText;
+    }
+    btn.textContent=linkText;
+
+    btn.onclick=function(){
+      if(activeLawId!==targetLaw.id){
+        activeLawId=targetLaw.id;
+      }
+      activeParId=li.parRefId;
+      renderEverything();
+      setTimeout(function(){scrollToParCard(li.parRefId)},30);
+    };
+
+    internalList.appendChild(btn);
+  });
+  internalGroup.appendChild(internalList);
+
+  // Přidání interního / externího odkazu
+  var linkActions=document.createElement("div");
+  linkActions.className="linkActionsRow";
+
+  var addInternalBtn=document.createElement("button");
+  addInternalBtn.textContent="➕ přidat § (i z jiného zákona)";
+  addInternalBtn.onclick=function(){
+    var pick=window.prompt("Zadej zkratku zákona a § (např. 'OZ § 1' nebo jen '§ 1'):","");
+    if(!pick) return;
+    var match=pick.match(/(.+)\s+§\s*(\S+.*)|§\s*(\S+.*)/i);
+    if(!match){ showToast("Neplatný formát odkazu."); return; }
+
+    var lawQuery = match[1]? match[1].trim(): null;
+    var parQuery = match[2]? match[2].trim(): (match[3]? match[3].trim(): null);
+
+    var targetLaw=null;
+    var targetPar=null;
+
+    if(lawQuery){
+      var allLaws=Object.values(state);
+      targetLaw=allLaws.find(function(l){
+        return (l.nazev||"").toLowerCase().indexOf(lawQuery.toLowerCase())!==-1;
+      });
+      if(targetLaw){
+        targetPar=targetLaw.pars.find(function(p){
+          return (p.cislo||"").replace(/^§\s*/,'').trim()===parQuery;
+        });
+      }
+    }
+    if(!targetPar){
+      targetLaw=currentLaw;
+      targetPar=currentLaw.pars.find(function(p){
+        return (p.cislo||"").replace(/^§\s*/,'').trim()===parQuery;
+      });
+    }
+
+    if(!targetPar){
+      showToast("Cílový § nenalezen.");
+      return;
+    }
+
+    var newLink={ parRefId: targetPar.id, lawRefId: targetLaw.id };
+    var exists=par.links_internal.some(function(x){
+      return x.parRefId===newLink.parRefId && x.lawRefId===newLink.lawRefId;
+    });
+    if(!exists){
+      par.links_internal.push(newLink);
+      saveState();
+      renderEverything();
+      showToast("Interní odkaz přidán.");
+    } else {
+      showToast("Odkaz už existuje.");
+    }
+  };
+
+  var addExternalBtn=document.createElement("button");
+  addExternalBtn.textContent="➕ přidat externí odkaz";
+  addExternalBtn.onclick=function(){
+    var lShort=window.prompt("Zkratka zákona (např. 'o.s.ř.'):","")||"";
+    var sect =window.prompt("Ustanovení (např. '§ 150'):","")||"";
+    if(!lShort && !sect)return;
+    par.links_external.push({
+      lawShort:lShort,
+      sectionRef:sect
+    });
+    saveState();
+    renderEverything();
+    showToast("Externí odkaz přidán.");
+  };
+
+  linkActions.appendChild(addInternalBtn);
+  linkActions.appendChild(addExternalBtn);
+
+  linksSection.appendChild(internalGroup);
+
+  // externí
+  var externalGroup=document.createElement("div");
+  var externalH5=document.createElement("h5");
+  externalH5.textContent="Jiné předpisy (bez interního odkazu)";
+  externalGroup.appendChild(externalH5);
+
+  var externalList=document.createElement("div");
+  par.links_external.forEach(function(le){
+    var btn=document.createElement("button");
+    btn.className="linkJump";
+    btn.textContent=(le.lawShort||"?")+" "+(le.sectionRef||"");
+    btn.onclick=function(){
+      var clip=(le.lawShort||"?")+" "+(le.sectionRef||"");
+      navigator.clipboard && navigator.clipboard.writeText(clip).catch(function(){});
+      showToast("Zkopírováno: "+clip,3000);
+    };
+    externalList.appendChild(btn);
+  });
+  externalGroup.appendChild(externalList);
+
+  linksSection.appendChild(externalGroup);
+  linksSection.appendChild(linkActions);
+
+  return linksSection;
+}
+
+// ===== Poznámky =====
+function buildNoteEditor(par){
+  var noteEditor=document.createElement("div");
+  noteEditor.className="noteEditorCard";
+
+  var noteToolbar=document.createElement("div");
+  noteToolbar.className="noteToolbar";
+
+  var noteTextEditable=document.createElement("div");
+  noteTextEditable.className="textBlock noteTextEditable";
+  noteTextEditable.contentEditable="true";
+  noteTextEditable.spellcheck=false;
+
+  // jsme v režimu editace?
+  var isEditing=(editingNoteRef && editingNoteRef.parObj.id===par.id);
+  if(isEditing){
+    noteTextEditable.innerHTML = editingNoteRef.noteObj.text || "<div><br></div>";
+  } else {
+    noteTextEditable.innerHTML = "<div><br></div>";
+    currentNoteFiles=[];
+  }
+
+  function ntBold(){ document.execCommand("bold"); }
+  function ntItalic(){ document.execCommand("italic"); }
+  function ntUnderline(){ document.execCommand("underline"); }
+  function ntColor(c){ wrapSelectionWithSpan(c); }
+  function ntResetColors(){ cleanupHighlights(noteTextEditable); }
+  function ntResetAll(){
+    // tady chceme čistý text ale zachovat odstavce -> proto normalizeEditableHTML
+    noteTextEditable.innerHTML = normalizeEditableHTML(noteTextEditable);
+    showToast("Formát poznámky vyčištěn.");
+  }
+
+  var mkBtn=function(lbl,styleObj,fn,extra){
+    var b=document.createElement("button");
+    b.textContent=lbl;
+    if(styleObj){ for(var k in styleObj){ b.style[k]=styleObj[k]; } }
+    if(extra){ for(var k2 in extra){ b.setAttribute(k2,extra[k2]); } }
+    b.onclick=fn;
+    return b;
+  };
+
+  noteToolbar.appendChild(mkBtn("B",{fontWeight:"600"},ntBold));
+  noteToolbar.appendChild(mkBtn("I",{fontStyle:"italic"},ntItalic));
+  noteToolbar.appendChild(mkBtn("U",{textDecoration:"underline"},ntUnderline));
+  noteToolbar.appendChild(mkBtn("Žlutě",null,function(){ntColor("hl-yellow")},{"data-color":"yellow"}));
+  noteToolbar.appendChild(mkBtn("Zeleně",null,function(){ntColor("hl-green")},{"data-color":"green"}));
+  noteToolbar.appendChild(mkBtn("Červeně",null,function(){ntColor("hl-red")},{"data-color":"red"}));
+  noteToolbar.appendChild(mkBtn("⟲ Barvy",null,ntResetColors));
+  noteToolbar.appendChild(mkBtn("✖ Vše",{fontWeight:"600"},ntResetAll));
+
+  // přílohy
+  var attachWrap=document.createElement("div");
+  attachWrap.className="attachWrap";
+
+  var attachLbl=document.createElement("label");
+  attachLbl.textContent="📎 Nové přílohy:";
+
+  var attachInput=document.createElement("input");
+  attachInput.type="file";
+  attachInput.multiple=true;
+
+  var existingFilesDiv=document.createElement("div");
+  existingFilesDiv.className="existing-files";
+
+  function renderExistingFiles(){
+    if(!currentNoteFiles.length){
+      existingFilesDiv.style.display="none";
+      existingFilesDiv.innerHTML="";
+      return;
+    }
+    existingFilesDiv.style.display="block";
+    var html="Stávající přílohy (zůstanou po uložení):<br>";
+    currentNoteFiles.forEach(function(ff,idx){
+      html+='<span>'+ff.name+
+            ' <button class="file-remove" data-idx="'+idx+'">✖</button></span> ';
+    });
+    existingFilesDiv.innerHTML=html;
+
+    Array.prototype.forEach.call(existingFilesDiv.querySelectorAll(".file-remove"),function(btn){
+      btn.onclick=function(e){
+        e.preventDefault();
+        var i=parseInt(btn.getAttribute("data-idx"),10);
+        currentNoteFiles.splice(i,1);
+        renderExistingFiles();
+      };
+    });
+  }
+
+  if(isEditing){
+    currentNoteFiles = (editingNoteRef.noteObj.files || []).slice();
+  }
+  renderExistingFiles();
+
+  attachWrap.appendChild(attachLbl);
+  attachWrap.appendChild(attachInput);
+  attachWrap.appendChild(existingFilesDiv);
+
+  // uložit poznámku
+  var noteSaveRow=document.createElement("div");
+  noteSaveRow.className="noteSaveRow";
+
+  var noteSaveBtn=document.createElement("button");
+  noteSaveBtn.className="smallBtn";
+  noteSaveBtn.textContent=isEditing?"💾 Uložit úpravu":"💾 Uložit poznámku";
+
+  noteSaveBtn.onclick=function(){
+    // zachovat HTML včetně <span class="hl-..."> pro barvy a <div> pro odstavce
+    // pokud je někdo vymazal na prázdno -> normalizuj aspoň na <div><br></div>
+    var cleanedHTML = noteTextEditable.innerHTML.trim();
+    if(!cleanedHTML || cleanedHTML===""){ cleanedHTML="<div><br></div>"; }
+
+    var newFiles=[];
+    for(var i=0;i<attachInput.files.length;i++){
+      var f=attachInput.files[i];
+      newFiles.push({name:f.name});
+    }
+    var finalFiles=currentNoteFiles.concat(newFiles);
+
+    if(isEditing){
+      editingNoteRef.noteObj.text  = cleanedHTML;
+      editingNoteRef.noteObj.files = finalFiles;
+      editingNoteRef=null;
+      showToast("Poznámka upravena.");
+    } else {
+      par.notes.push({
+        id:uid("note"),
+        created:nowTimestamp(),
+        text:cleanedHTML,
+        files:finalFiles
+      });
+      showToast("Poznámka uložena.");
+    }
+
+    // reset
+    noteTextEditable.innerHTML="<div><br></div>";
+    attachInput.value="";
+    currentNoteFiles=[];
+    editingNoteRef=null;
+
+    saveState();
+    renderEverything();
+  };
+
+  noteSaveRow.appendChild(noteSaveBtn);
+
+  noteEditor.appendChild(noteToolbar);
+  noteEditor.appendChild(noteTextEditable);
+  noteEditor.appendChild(attachWrap);
+  noteEditor.appendChild(noteSaveRow);
+
+  return noteEditor;
+}
+
+function buildNotesList(par){
+  var savedNotesList=document.createElement("div");
+  savedNotesList.className="savedNotesList";
+
+  par.notes.slice().reverse().forEach(function(oneNote){
+    var noteCard=document.createElement("div");
+    noteCard.className="singleNoteCard";
+
+    var headRow=document.createElement("div");
+    headRow.className="singleNoteHeadRow";
+
+    var leftInfo=document.createElement("div");
+    leftInfo.textContent=oneNote.created||"(bez času)";
+
+    var btnsWrapper=document.createElement("div");
+    btnsWrapper.style.display="flex";
+    btnsWrapper.style.flexWrap="wrap";
+    btnsWrapper.style.gap=".5rem";
+
+    var editBtn=document.createElement("button");
+    editBtn.textContent="✏ Upravit";
+    editBtn.onclick=function(){
+      editingNoteRef={ parObj:par, noteObj:oneNote };
+      currentNoteFiles=(oneNote.files||[]).slice();
+      renderEverything();
+      var ed=document.querySelector(".noteEditorCard");
+      if(ed){ ed.scrollIntoView({behavior:"smooth"}); }
+    };
+
+    var delBtn=document.createElement("button");
+    delBtn.textContent="🗑 Smazat";
+    delBtn.onclick=function(){
+      if(window.confirm("Smazat tuto poznámku?")){
+        par.notes=par.notes.filter(function(n){return n.id!==oneNote.id});
+        saveState();
+        renderEverything();
+        showToast("Poznámka smazána.");
+      }
+    };
+
+    btnsWrapper.appendChild(editBtn);
+    btnsWrapper.appendChild(delBtn);
+
+    headRow.appendChild(leftInfo);
+    headRow.appendChild(btnsWrapper);
+
+    var bodyDiv=document.createElement("div");
+    bodyDiv.innerHTML=oneNote.text||"";
+
+    var filesDiv=document.createElement("div");
+    filesDiv.className="filesList";
+
+    if(oneNote.files && oneNote.files.length){
+      var fHead=document.createElement("div");
+      fHead.textContent="📎 Přílohy:";
+      filesDiv.appendChild(fHead);
+
+      oneNote.files.forEach(function(ff){
+        var item=document.createElement("div");
+        item.className="filesListItem";
+
+        var icon=document.createElement("span");
+        icon.textContent="📎";
+
+        var linkBtn=document.createElement("button");
+        linkBtn.textContent=ff.name||"(soubor)";
+        linkBtn.onclick=function(){
+          showToast("Simulace otevření '"+(ff.name||"soubor")+"'.");
+        };
+
+        item.appendChild(icon);
+        item.appendChild(linkBtn);
+        filesDiv.appendChild(item);
+      });
+    }
+
+    noteCard.appendChild(headRow);
+    noteCard.appendChild(bodyDiv);
+    noteCard.appendChild(filesDiv);
+
+    savedNotesList.appendChild(noteCard);
+  });
+
+  return savedNotesList;
+}
+
+// ===== Paragraf karta =====
+function buildParCard(law, par){
+  var card=document.createElement("article");
+  card.className="parCard";
+  card.dataset.parId=par.id;
+
+  var headRow=document.createElement("div");
+  headRow.className="parHeadRow";
+
+  var headTitles=document.createElement("div");
+  headTitles.className="parHeadTitles";
+
+  var parNumberEditable=document.createElement("div");
+  parNumberEditable.className="parNumberEditable";
+  parNumberEditable.contentEditable="true";
+  parNumberEditable.spellcheck=false;
+  parNumberEditable.textContent=par.cislo||"§ ?";
+  parNumberEditable.onblur=function(){
+    par.cislo=parNumberEditable.textContent.trim();
+    renderParList();
+    autoSave();
+    showToast("Číslo § uloženo.",1200);
+  };
+
+  var parNameEditable=document.createElement("div");
+  parNameEditable.className="parNameEditable";
+  parNameEditable.contentEditable="true";
+  parNameEditable.spellcheck=false;
+  parNameEditable.textContent=par.nazev||"(bez názvu)";
+  parNameEditable.onblur=function(){
+    par.nazev=parNameEditable.textContent.trim();
+    renderParList();
+    autoSave();
+    showToast("Název § uložen.",1200);
+  };
+
+  var parLawSmall=document.createElement("div");
+  parLawSmall.className="parLawSmall";
+  parLawSmall.textContent=law.nazev||"(bez názvu zákona)";
+
+  headTitles.appendChild(parNumberEditable);
+  headTitles.appendChild(parNameEditable);
+  headTitles.appendChild(parLawSmall);
+
+  var headBtns=document.createElement("div");
+  headBtns.className="headBtnsRow";
+
+  var btnDel=document.createElement("button");
+  btnDel.className="smallBtn danger";
+  btnDel.textContent="🗑 Smazat §";
+  btnDel.onclick=function(){ deletePar(par.id); };
+
+  headBtns.appendChild(btnDel);
+
+  headRow.appendChild(headTitles);
+  headRow.appendChild(headBtns);
+
+  var bodyGrid=document.createElement("div");
+  bodyGrid.className="parBodyGrid";
+
+  // levý sloupec
+  var leftCol=document.createElement("div");
+
+  var parTextEditable=document.createElement("div");
+  parTextEditable.className="textBlock parTextEditable";
+  parTextEditable.contentEditable="true";
+  parTextEditable.spellcheck=false;
+  parTextEditable.innerHTML=par.text||"<div><br></div>";
+
+  parTextEditable.oninput=function(){
+    if(parTextEditable.innerHTML.trim()===""){
+      parTextEditable.innerHTML="<div><br></div>";
+    }
+  };
+
+  // uložit změny textu paragrafu
+  var saveParBtn=document.createElement("button");
+  saveParBtn.className="smallBtn";
+  saveParBtn.textContent="💾 Uložit text §";
+  saveParBtn.onclick=function(){
+    // chceme zachovat celé HTML včetně barevných spanů
+    var html=parTextEditable.innerHTML.trim();
+    if(!html){ html="<div><br></div>"; }
+    par.text=html;
+    autoSave();
+    showToast("Text § uložen.",1500);
+  };
+
+  // toolbar pro paragraf
+  var formatTb=document.createElement("div");
+  formatTb.className="formatToolbar";
+
+  function tbBold(){ document.execCommand("bold"); }
+  function tbItalic(){ document.execCommand("italic"); }
+  function tbUnderline(){ document.execCommand("underline"); }
+  function tbColor(c){ wrapSelectionWithSpan(c); }
+  function tbResetColors(){
+    cleanupHighlights(parTextEditable);
+    autoSave();
+    showToast("Zvýraznění smazáno.",1200);
+  }
+  function tbResetAll(){
+    // smažeme formátování → čistý text s odstavci
+    parTextEditable.innerHTML=normalizeEditableHTML(parTextEditable);
+    autoSave();
+    showToast("Formát § vyčištěn.");
+  }
+
+  var mkBtn2=function(lbl,styleObj,fn,extra){
+    var b=document.createElement("button");
+    b.textContent=lbl;
+    if(styleObj){ for(var k in styleObj){ b.style[k]=styleObj[k]; } }
+    if(extra){ for(var k2 in extra){ b.setAttribute(k2,extra[k2]); } }
+    b.onclick=fn;
+    return b;
+  };
+
+  formatTb.appendChild(mkBtn2("B",{fontWeight:"600"},tbBold));
+  formatTb.appendChild(mkBtn2("I",{fontStyle:"italic"},tbItalic));
+  formatTb.appendChild(mkBtn2("U",{textDecoration:"underline"},tbUnderline));
+  formatTb.appendChild(mkBtn2("Žlutě",null,function(){tbColor("hl-yellow")},{"data-color":"yellow"}));
+  formatTb.appendChild(mkBtn2("Zeleně",null,function(){tbColor("hl-green")},{"data-color":"green"}));
+  formatTb.appendChild(mkBtn2("Červeně",null,function(){tbColor("hl-red")},{"data-color":"red"}));
+  formatTb.appendChild(mkBtn2("⟲ Barvy",null,tbResetColors));
+  formatTb.appendChild(mkBtn2("✖ Vše",{fontWeight:"600"},tbResetAll));
+
+  var saveParRow=document.createElement("div");
+  saveParRow.className="saveParRow";
+  saveParRow.appendChild(saveParBtn);
+
+  var linksSection=buildLinksSection(law, par);
+
+  leftCol.appendChild(formatTb);
+  leftCol.appendChild(parTextEditable);
+  leftCol.appendChild(saveParRow);
+  leftCol.appendChild(linksSection);
+
+  // pravý sloupec
+  var rightCol=document.createElement("div");
+  var noteEditor=buildNoteEditor(par);
+  var savedNotesList=buildNotesList(par);
+  rightCol.appendChild(noteEditor);
+  rightCol.appendChild(savedNotesList);
+
+  bodyGrid.appendChild(leftCol);
+  bodyGrid.appendChild(rightCol);
+
+  card.appendChild(headRow);
+  card.appendChild(bodyGrid);
+
+  return card;
+}
+
+// ===== Pravý panel =====
+function renderRightPanel(){
+  var right=document.getElementById("rightPanel");
+  right.innerHTML="";
+  if(!activeLawId || !state[activeLawId]) return;
+  var law=state[activeLawId];
+
+  if(editingNoteRef && editingNoteRef.parObj.lawId!==activeLawId){
+    editingNoteRef=null;
+    currentNoteFiles=[];
+  }
+
+  law.pars.forEach(function(par){
+    // doplníme par.lawId pokud chybí
+    par.lawId=activeLawId;
+    var card=buildParCard(law,par);
+    right.appendChild(card);
+  });
+
+  if(activeParId){
+    setTimeout(function(){ scrollToParCard(activeParId);},30);
+  }
+}
+
+// ===== Vytváření / mazání zákonů a paragrafů =====
+function addLaw(){
+  var newId=uid("law");
+  var lawName=window.prompt("Název zákona (např. '182/2006 Sb. Insolvenční zákon'):","")||"Nový zákon";
+  state[newId]={
+    id:newId,
+    nazev:lawName,
+    pars:[]
+  };
+  activeLawId=newId;
+  activeParId=null;
+  saveState();
+  renderEverything();
+  showToast("Zákon '"+lawName+"' přidán.");
+}
+
+function removeCurrentLaw(){
+  if(!activeLawId||!state[activeLawId])return;
+  if(!window.confirm("Opravdu smazat celý tento zákon?\n"+state[activeLawId].nazev))return;
+  var lawName=state[activeLawId].nazev;
+  delete state[activeLawId];
+  var keys=Object.keys(state);
+  activeLawId=keys.length?keys[0]:null;
+  activeParId=null;
+  saveState();
+  renderEverything();
+  showToast("Zákon '"+lawName+"' odebrán.");
+}
+
+function addPar(){
+  if(!activeLawId||!state[activeLawId])return;
+  var law=state[activeLawId];
+
+  var cislo=window.prompt("Číslo paragrafu (např. '§ 3a'):","§ ?");
+  var nazev=window.prompt("Název paragrafu:","Nový paragraf");
+
+  var parId=uid("par");
+  var newPar={
+    id:parId,
+    cislo: cislo || "§ ?",
+    nazev: nazev || "(bez názvu)",
+    text:"<div><br></div>",
+    notes:[],
+    links_internal:[],
+    links_external:[]
+  };
+
+  if(!activeParId){
+    law.pars.push(newPar);
+  } else {
+    var idx=law.pars.findIndex(function(p){return p.id===activeParId});
+    law.pars.splice(idx+1,0,newPar);
+  }
+
+  activeParId=parId;
+  saveState();
+  renderEverything();
+  showToast("§ "+newPar.cislo+" přidán.");
+}
+
+function deletePar(parId){
+  if(!activeLawId||!state[activeLawId])return;
+  var law=state[activeLawId];
+  if(!window.confirm("Smazat tento §?"))return;
+  var idx=law.pars.findIndex(function(p){return p.id===parId});
+  law.pars = law.pars.filter(function(p){return p.id!==parId});
+  if(activeParId===parId){
+    if(idx>0 && law.pars[idx-1]){
+      activeParId=law.pars[idx-1].id;
+    } else {
+      activeParId=law.pars[0]? law.pars[0].id : null;
+    }
+  }
+  saveState();
+  renderEverything();
+  showToast("§ smazán.");
+}
+
+// ===== Import / Export =====
+function exportJSON(){
+  var dataStr=JSON.stringify(state,null,2);
+  var blob=new Blob([dataStr],{type:"application/json;charset=utf-8"});
+  var url=URL.createObjectURL(blob);
+  var a=document.createElement("a");
+  a.href=url;
+  a.download="ISZ_export_"+Date.now()+".json";
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast("Záloha exportována.",2500);
+}
+
+function importJSONFile(file){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try {
+      var imported=JSON.parse(e.target.result);
+      state=imported;
+      var keys=Object.keys(state);
+      activeLawId=keys.length?keys[0]:null;
+      activeParId= (activeLawId && state[activeLawId].pars[0]) ? state[activeLawId].pars[0].id : null;
+      saveState();
+      renderEverything();
+      showToast("Data úspěšně importována ("+keys.length+" zákonů).",3000);
+    } catch(err){
+      console.error(err);
+      showToast("Neplatný JSON. Zkontrolujte formát.",3000);
+    }
+  };
+  reader.readAsText(file,"utf-8");
+}
+
+function importLawFromTxt(file){
+  var reader=new FileReader();
+  reader.onload=function(e){
+    var raw=e.target.result;
+    var lines=raw.split(/\r?\n/);
+
+    var newLawId=uid("law");
+    var lawName=window.prompt("Název zákona:", file.name.replace(/\.txt$/i,""))||"Nový zákon";
+
+    var newLaw={
+      id:newLawId,
+      nazev:lawName,
+      pars:[]
+    };
+
+    var currentPar=null;
+    for(var i=0;i<lines.length;i++){
+      var line=lines[i].trim();
+
+      if(/^(HLAVA|DÍL|ČÁST)\b/i.test(line)){
+        continue;
+      }
+
+      if(/^§/.test(line)){
+        if(currentPar){
+          newLaw.pars.push(currentPar);
+        }
+        var parId=uid("par");
+        currentPar={
+          id:parId,
+          cislo:line,
+          nazev:"",
+          text:"",
+          notes:[],
+          links_internal:[],
+          links_external:[]
+        };
+
+        var maybeTitle=(lines[i+1]||"").trim();
+        if(
+          maybeTitle &&
+          !/^§/.test(maybeTitle) &&
+          !/^(HLAVA|DÍL|ČÁST)\b/i.test(maybeTitle) &&
+          looksLikeParTitle(maybeTitle)
+        ){
+          currentPar.nazev=maybeTitle;
+          i++;
+        } else {
+          currentPar.nazev="(bez názvu)";
+        }
+      } else {
+        if(currentPar && line){
+          currentPar.text+='<div>'+escapeHTML(line)+'</div>';
+        }
+      }
+    }
+    if(currentPar){
+      newLaw.pars.push(currentPar);
+    }
+
+    state[newLawId]=newLaw;
+    activeLawId=newLawId;
+    activeParId=newLaw.pars[0]?newLaw.pars[0].id:null;
+    saveState();
+    renderEverything();
+    showToast("Zákon '"+lawName+"' načten ("+newLaw.pars.length+" §).",3000);
+  };
+  reader.readAsText(file,"utf-8");
+}
+
+// ===== LISTENERY UI =====
+function initListeners(){
+  var btnAddLaw=document.getElementById("btnAddLaw");
+  var btnRemoveLaw=document.getElementById("btnRemoveLaw");
+  var btnLoadTxtLaw=document.getElementById("btnLoadTxtLaw");
+  var btnAddPar=document.getElementById("btnAddPar");
+  var btnExport=document.getElementById("btnExport");
+  var btnImport=document.getElementById("btnImport");
+  var txtLawFileInput=document.getElementById("txtLawFileInput");
+  var jsonImportInput=document.getElementById("jsonImportInput");
+  var parSearchInput=document.getElementById("parSearchInput");
+  var globalSearchInput=document.getElementById("globalSearchInput");
+
+  btnAddLaw.onclick=addLaw;
+  btnRemoveLaw.onclick=removeCurrentLaw;
+  btnAddPar.onclick=addPar;
+  btnExport.onclick=exportJSON;
+
+  btnImport.onclick=function(){
+    jsonImportInput.value="";
+    jsonImportInput.click();
+  };
+  jsonImportInput.addEventListener("change",function(e){
+    var file=e.target.files[0];
+    if(file){ importJSONFile(file); }
+  });
+
+  btnLoadTxtLaw.onclick=function(){
+    txtLawFileInput.value="";
+    txtLawFileInput.click();
+  };
+  txtLawFileInput.addEventListener("change",function(e){
+    var file=e.target.files[0];
+    if(file){ importLawFromTxt(file); }
+  });
+
+  parSearchInput.addEventListener("input", debounce(renderParList,150));
+
+  // globalSearchInput - zatím jen filtruje aktivní zákon, stejně jako levé hledání
+  globalSearchInput.addEventListener("input", function(){
+    parSearchInput.value=globalSearchInput.value;
+    renderParList();
+  });
+}
+
+// ===== INIT =====
+function init(){
+  if(!activeLawId){
+    var keys=Object.keys(state);
+    if(keys.length){
+      activeLawId=keys[0];
+      activeParId= state[activeLawId].pars[0]? state[activeLawId].pars[0].id : null;
+    }
+  }
+  initListeners();
+  renderEverything();
+}
+
+init();
+
+})(); // IIFE
+</script>
+
+</body>
+</html>
